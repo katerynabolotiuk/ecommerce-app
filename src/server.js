@@ -9,7 +9,7 @@ const port = process.env.PORT;
 
 async function runMigrations() {
   const migrator = new Umzug({
-    migrations: { glob: 'migrations/*.js' }, 
+    migrations: { glob: 'src/migrations/*.js' }, 
     context: sequelize.getQueryInterface(),
     storage: new SequelizeStorage({ sequelize }),
     logger: {
