@@ -1,42 +1,42 @@
-'use strict';
+const {Sequelize} = require('sequelize')
 
-module.exports = {
-  async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('CartItems', {
-      id: { type: Sequelize.INTEGER, 
-        autoIncrement: true, 
-        primaryKey: true 
-      },
-      cartId: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        references: { model: 'Carts', key: 'id' },
-        onDelete: 'CASCADE'
-      },
-      productId: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        references: { model: 'Products', key: 'id' },
-        onDelete: 'CASCADE'
-      },
-      quantity: { 
-        type: Sequelize.INTEGER, 
-        allowNull: false, 
-        defaultValue: 1 
-      },
-      createdAt: { 
-        allowNull: false, 
-        type: Sequelize.DATE, 
-        defaultValue: Sequelize.fn('NOW') 
-      },
-      updatedAt: { allowNull: false, 
-        type: Sequelize.DATE, 
-        defaultValue: Sequelize.fn('NOW') 
-      }
-    });
-  },
-
-  async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('CartItems');
-  }
+async function up ({context: queryInterface}) {
+  await queryInterface.createTable('CartItems', {
+    id: { type: Sequelize.DataTypes.INTEGER, 
+      autoIncrement: true, 
+      primaryKey: true 
+    },
+    cartId: {
+      type: Sequelize.DataTypes.INTEGER,
+      allowNull: false,
+      references: { model: 'Carts', key: 'id' },
+      onDelete: 'CASCADE'
+    },
+    productId: {
+      type: Sequelize.DataTypes.INTEGER,
+      allowNull: false,
+      references: { model: 'Products', key: 'id' },
+      onDelete: 'CASCADE'
+    },
+    quantity: { 
+      type: Sequelize.DataTypes.INTEGER, 
+      allowNull: false, 
+      defaultValue: 1 
+    },
+    createdAt: { 
+      allowNull: false, 
+      type: Sequelize.DataTypes.DATE, 
+      defaultValue: Sequelize.fn('NOW') 
+    },
+    updatedAt: { allowNull: false, 
+      type: Sequelize.DataTypes.DATE, 
+      defaultValue: Sequelize.fn('NOW') 
+    }
+  });
 };
+
+async function down({context: queryInterface}) {
+  await queryInterface.dropTable('CartItems');
+};
+
+module.exports = {up, down}
