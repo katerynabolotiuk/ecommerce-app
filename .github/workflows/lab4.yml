@@ -25,6 +25,12 @@ jobs:
       - name: Verify Helm installation
         run: helm version
 
+      - name: Create KinD cluster
+        uses: helm/kind-action@v1.10.0
+
+      - name: Verify cluster
+        run: kubectl cluster-info
+
       - name: Run Lab 4 validation script
         run: |
           chmod +x ./tests/lab4_test.sh
