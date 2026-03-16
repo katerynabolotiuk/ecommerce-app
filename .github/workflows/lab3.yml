@@ -24,9 +24,10 @@ jobs:
           kubectl apply -f k8s/db.yaml
           kubectl apply -f k8s/app.yaml
           
-      - name: Wait for Postgres
-        run: kubectl rollout status deployment/postgres --timeout=60s
-             kubectl rollout status deployment/ecommerce-app --timeout=60s
+      - name: Wait for Deployments
+              run: |
+                kubectl rollout status deployment/postgres --timeout=60s
+                kubectl rollout status deployment/ecommerce-app --timeout=60s
         
 
       - name: Run Master Validation Script
