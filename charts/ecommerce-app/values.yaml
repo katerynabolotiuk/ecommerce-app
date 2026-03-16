@@ -1,0 +1,20 @@
+replicaCount: 2
+
+image:
+  repository: ecommerce-app
+  tag: latest
+  pullPolicy: IfNotPresent
+
+resources:
+  limits:
+    cpu: "500m"
+    memory: "512Mi"
+  requests:
+    cpu: "200m"
+    memory: "256Mi"
+
+postgres:
+  image: postgres:15-alpine
+  db: ecommerce
+  user: postgres
+  password: postgres
