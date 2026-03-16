@@ -28,21 +28,22 @@ jobs:
         run: |
           kubectl apply -f k8s/db.yaml
           kubectl rollout status deployment/postgres --timeout=120s
-          sleep 10 
+          sleep 15
 
       - name: Deploy App
         run: |
           kubectl apply -f k8s/app.yaml
-          kubectl rollout status deployment/ecommerce-app --timeout=180s
+          kubectl rollout status deployment/ecommerce-app --timeout=240s
+          sleep 5
 
+      - name: Run Master Validation Script
+        run: |
+          chmod +x ./tests/lab3_test.sh
+          ./tests/lab3_test.sh
+        
       - name: Debug on Failure
         if: failure()
         run: |
           kubectl get pods
-          kubectl logs -l app=ecommerce-app --tail=50
-
-      - name: Run Master Validation Script
-        if: always()
-        run: |
-          chmod +x ./tests/lab3_test.sh
-          ./tests/lab3_test.sh
+          kubectl describe pod -l app=ecommerce-app
+          kubectl logs -l app=ecommerce-app --tail=100
