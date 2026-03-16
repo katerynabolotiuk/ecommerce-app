@@ -3,14 +3,14 @@ kind: ConfigMap
 metadata:
   name: ecommerce-config
 data:
-  NODE_ENV: "production"
   DB_HOST: "postgres"
   DB_PORT: "5432"
   DB_NAME: "ecommerce"
   DB_USER: "postgres"
-
+  DATABASE_URL: "postgresql://postgres:postgres@postgres:5432/ecommerce"
+  POSTGRES_HOST: "postgres"
+  POSTGRES_DB: "ecommerce"
 ---
-
 apiVersion: v1
 kind: Secret
 metadata:
@@ -18,7 +18,9 @@ metadata:
 type: Opaque
 data:
   DB_PASSWORD: cG9zdGdyZXM= 
-
+  POSTGRES_PASSWORD: cG9zdGdyZXM=
+  # postgresql://postgres:postgres@postgres:5432/ecommerce у base64:
+  DATABASE_URL: cG9zdGdyZXNxbDovL3Bvc3RncmVzOnBvc3RncmVzQHBvc3RncmVzOjU0MzIvZWNvbW1lcmNl
 ---
 
 apiVersion: apps/v1
