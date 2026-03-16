@@ -33,8 +33,17 @@ jobs:
       - name: Deploy App
         run: |
           kubectl apply -f k8s/app.yaml
-          kubectl rollout status deployment/ecommerce-app --timeout=240s
-          sleep 5
+          kubectl rollout status deployment/ecommerce-app --timeout=120s
+
+      - name: Logs & Describe
+        if: failure()
+        run: |
+          echo "=== POD STATUS ==="
+          kubectl get pods
+          echo "=== ERROR DESCRIPTION ==="
+          kubectl describe pod -l app=ecommerce-app
+          echo "=== LOGS ==="
+          kubectl logs -l app=ecommerce-app --tail=100
 
       - name: Run Master Validation Script
         run: |
