@@ -14,10 +14,9 @@ jobs:
         with:
           cluster_name: kind
 
-      - name: Build and Pull images
+      - name: Build and Pull images   
         run: |
           docker build -t ecommerce-app:latest .
-          # Викачуємо базу заздалегідь (це швидше)
           docker pull postgres:15-alpine
 
       - name: Load images into KinD
@@ -25,14 +24,22 @@ jobs:
           kind load docker-image ecommerce-app:latest --name kind
           kind load docker-image postgres:15-alpine --name kind
 
-      - name: Deploy to Kubernetes
-        run: kubectl apply -f k8s/
+      - name: Deploy Database
+        run: |
+          kubectl apply -f k8s/db.yaml
+          kubectl rollout status deployment/postgres --timeout=120s
+          sleep 10 
 
-      - name: Wait for Postgres
-        run: kubectl rollout status deployment/postgres --timeout=120s
+      - name: Deploy App
+        run: |
+          kubectl apply -f k8s/app.yaml
+          kubectl rollout status deployment/ecommerce-app --timeout=180s
 
-      - name: Wait for App
-        run: kubectl rollout status deployment/ecommerce-app --timeout=120s
+      - name: Debug on Failure
+        if: failure()
+        run: |
+          kubectl get pods
+          kubectl logs -l app=ecommerce-app --tail=50
 
       - name: Run Master Validation Script
         if: always()
