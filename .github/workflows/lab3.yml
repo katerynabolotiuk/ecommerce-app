@@ -26,6 +26,8 @@ jobs:
           
       - name: Wait for Postgres
         run: kubectl rollout status deployment/postgres --timeout=60s
+             kubectl rollout status deployment/ecommerce-app --timeout=60s
+        
 
       - name: Run Master Validation Script
         run: |
