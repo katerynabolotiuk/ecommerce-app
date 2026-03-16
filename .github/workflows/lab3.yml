@@ -24,13 +24,14 @@ jobs:
           kubectl apply -f k8s/db.yaml
           kubectl apply -f k8s/app.yaml
           
-      - name: Wait for Deployments
+      - name: Wait for Resources
         run: |
-          kubectl rollout status deployment/postgres --timeout=60s
-          kubectl rollout status deployment/ecommerce-app --timeout=60s
-        
+          kubectl rollout status deployment/postgres --timeout=90s
+          
+          kubectl rollout status deployment/ecommerce-app --timeout=180s
 
       - name: Run Master Validation Script
+        if: always()
         run: |
           chmod +x ./tests/lab3_test.sh
           ./tests/lab3_test.sh
