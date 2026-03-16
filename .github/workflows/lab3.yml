@@ -1,0 +1,57 @@
+name: Lab 3 Grading
+
+on: [push]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Create KinD Cluster
+        uses: helm/kind-action@v1.12.0
+        with:
+          cluster_name: kind
+
+      - name: Build and Pull images   
+        run: |
+          docker build -t ecommerce-app:latest .
+          docker pull postgres:15-alpine
+
+      - name: Load images into KinD
+        run: |
+          kind load docker-image ecommerce-app:latest --name kind
+          kind load docker-image postgres:15-alpine --name kind
+
+      - name: Deploy Database
+        run: |
+          kubectl apply -f k8s/db.yaml
+          kubectl rollout status deployment/postgres --timeout=120s
+          sleep 15
+
+      - name: Deploy App
+        run: |
+          kubectl apply -f k8s/app.yaml
+          kubectl rollout status deployment/ecommerce-app --timeout=120s
+
+      - name: Logs & Describe
+        if: failure()
+        run: |
+          echo "=== POD STATUS ==="
+          kubectl get pods
+          echo "=== ERROR DESCRIPTION ==="
+          kubectl describe pod -l app=ecommerce-app
+          echo "=== LOGS ==="
+          kubectl logs -l app=ecommerce-app --tail=100
+
+      - name: Run Master Validation Script
+        run: |
+          chmod +x ./tests/lab3_test.sh
+          ./tests/lab3_test.sh
+        
+      - name: Debug on Failure
+        if: failure()
+        run: |
+          kubectl get pods
+          kubectl logs -l app=ecommerce --tail=100
