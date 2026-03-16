@@ -54,5 +54,4 @@ jobs:
         if: failure()
         run: |
           kubectl get pods
-          kubectl describe pod -l app=ecommerce-app
-          kubectl logs -l app=ecommerce-app --tail=100
+          kubectl logs -l app=ecommerce --tail=100
