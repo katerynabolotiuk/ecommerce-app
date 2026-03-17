@@ -1,0 +1,37 @@
+name: Lab4 Helm Validation
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  helm-check:
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Helm
+        uses: azure/setup-helm@v4
+        with:
+          version: v3.14.0
+
+      - name: Verify Helm installation
+        run: helm version
+
+      - name: Create KinD cluster
+        uses: helm/kind-action@v1.10.0
+
+      - name: Verify cluster
+        run: kubectl cluster-info
+
+      - name: Run Lab 4 validation script
+        run: |
+          chmod +x ./tests/lab4_test.sh
+          ./tests/lab4_test.sh
